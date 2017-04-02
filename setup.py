@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-from setuptools import setup, find_packages  # This setup relies on setuptools since distutils is insufficient and badly hacked code
+# This setup relies on setuptools since distutils is insufficient and
+# badly hacked code
+from setuptools import setup, find_packages
 
 version = '0.0.1'
 author = 'David-Leon Pohl'
@@ -20,7 +22,15 @@ setup(
     maintainer_email=author_email,
     packages=find_packages(),
     install_requires=required,
-    include_package_data=True,  # accept all data files and directories matched by MANIFEST.in or found in source control
-    package_data={'': ['README.*', 'VERSION'], 'docs': ['*'], 'examples': ['*']},
-    platforms='linux'
+    # accept all data files and directories matched by MANIFEST.in or found in
+    # source control
+    include_package_data=True,
+    package_data={
+        '': ['README.*', 'VERSION'], 'docs': ['*'], 'examples': ['*']},
+    platforms='linux',
+    entry_points={
+        'console_scripts': [
+            'hass_scripts = hass_scripts.__main__:main'
+        ]
+    },
 )

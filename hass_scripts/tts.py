@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 # Used console command to play mp3 file
 MP3_CMD = 'mpg123 -q'
+# MQTT settings
 MQTT_SERVER = 'mqtts://192.168.1.200:8883'
 MQTT_TOPIC = '/devices/tts/#'
 MQTT_CA = '/home/davidlp/git/hass_scripts/ca.crt'
@@ -53,25 +54,29 @@ async def mqtt_rcv():
         message = await c.deliver_message()
         packet = message.publish_packet
         await q.put((packet.variable_header.topic_name, packet.payload.data))
-        print("%s => %s" %
-              (packet.variable_header.topic_name, str(packet.payload.data)))
 # FIXME: never called
 #     await c.unsubscribe([MQTT_TOPIC])
 #     logger.info("UnSubscribed")
 #     await c.disconnect()
 
 
+async def main():
+    config = {
+        'certfile': MQTT_CRT,
+        'keyfile': MQTT_KEY
+    }
+    global c
+    c = client.MQTTClient(config=config)
+    global q
+    q = asyncio.Queue()
+    loop = asyncio.get_event_loop()
+    loop.create_task(consumer())
+    loop.create_task(mqtt_rcv())
+
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s %(levelname)s %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S")
-    config = {
-        'certfile': MQTT_CRT,
-        'keyfile': MQTT_KEY
-    }
-    c = client.MQTTClient(config=config)
-    q = asyncio.Queue()
-    loop = asyncio.get_event_loop()
-    loop.create_task(consumer())
-    loop.run_until_complete(mqtt_rcv())
+    main()
+    asyncio.get_event_loop().run_forever()
