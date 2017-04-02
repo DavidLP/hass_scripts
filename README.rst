@@ -11,9 +11,9 @@ Needs linux with mpg123 installed to play mp3 files.
 Linux
 -----
 This installation has been tested with Raspian and Python 3.6.
-`mpg123` should be installed.
 
-1. Download the code
+1. Prequites:
+   sudo apt-get install mpg123 libyaml-dev
 
 2. Install:
 
