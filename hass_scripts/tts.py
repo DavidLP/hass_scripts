@@ -9,6 +9,8 @@ from gtts import gTTS
 
 logger = logging.getLogger(__name__)
 
+# Time to talk to the speaker to prevent shutdown
+ALIVE_TIME = 300  # in seconds
 # Used console command to play mp3 file
 MP3_CMD = 'mpg123 -q'
 # MQTT settings
@@ -32,6 +34,14 @@ def output(text, lang):
         output_google(text, lang)
     except:  # Fallback if no internet connection
         os.system('espeak' + ' "' + text + '"')
+
+async def keep_alive():
+    ''' Send empty sounds to prevent speaker power down '''
+    while True:
+        logger.info('Poll speaker to prevent power down')
+        if q.empty():
+            await q.put(('/devices/tts/say', b''))
+        await asyncio.sleep(ALIVE_TIME)
 
 
 async def consumer():
@@ -72,6 +82,7 @@ async def main():
     global q
     q = asyncio.Queue()
     loop = asyncio.get_event_loop()
+    loop.create_task(keep_alive())
     loop.create_task(consumer())
     loop.create_task(mqtt_rcv())
 
