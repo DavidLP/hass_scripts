@@ -14,9 +14,9 @@ MP3_CMD = 'mpg123 -q'
 # MQTT settings
 MQTT_SERVER = 'mqtts://192.168.1.200:8883'
 MQTT_TOPIC = '/devices/tts/#'
-MQTT_CA = '/home/davidlp/git/hass_scripts/ca.crt'
-MQTT_CRT = '/home/davidlp/git/hass_scripts/test.crt'
-MQTT_KEY = '/home/davidlp/git/hass_scripts/test.key'
+MQTT_CA = '/home/pi/mosquitto/ca.crt'
+MQTT_CRT = '/home/pi/mosquitto/rpi2.crt'
+MQTT_KEY = '/home/pi/mosquitto/rpi2.key'
 
 
 def output_google(text, lang):
@@ -63,7 +63,9 @@ async def mqtt_rcv():
 async def main():
     config = {
         'certfile': MQTT_CRT,
-        'keyfile': MQTT_KEY
+        'keyfile': MQTT_KEY,
+        'keep_alive': 60,  # otherwise time out and broker disconnect
+        'ping_delay': 1
     }
     global c
     c = client.MQTTClient(config=config)
