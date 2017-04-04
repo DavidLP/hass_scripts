@@ -1,0 +1,2 @@
+pulseaudio --start
+pacmd set-default-sink bluez_sink.C9_50_76_83_77_0C

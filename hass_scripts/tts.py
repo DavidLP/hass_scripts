@@ -30,6 +30,7 @@ def output_google(text, lang):
 
 
 def output(text, lang):
+    logger.info('Speak %s', text)
     try:
         output_google(text, lang)
     except:  # Fallback if no internet connection
