@@ -76,7 +76,10 @@ async def main():
         'certfile': MQTT_CRT,
         'keyfile': MQTT_KEY,
         'keep_alive': 60,  # otherwise time out and broker disconnect
-        'ping_delay': 1
+        'ping_delay': 1,
+        'auto_reconnect': True,
+        'reconnect_max_interval': 10,
+        'reconnect_retries': 100
     }
     global c
     c = client.MQTTClient(config=config)
@@ -92,5 +95,6 @@ if __name__ == '__main__':
         level=logging.INFO,
         format="%(asctime)s %(levelname)s %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S")
-    main()
-    asyncio.get_event_loop().run_forever()
+    loop = asyncio.get_event_loop()
+    loop.create_task(main())
+    loop.run_forever()
